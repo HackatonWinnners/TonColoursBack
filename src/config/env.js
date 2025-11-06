@@ -119,6 +119,14 @@ const telegram = telegramBotToken
 
 const walletVersion = normalizeWalletVersion(process.env.MINT_WALLET_VERSION);
 
+// MinIO Configuration (S3-compatible object storage)
+const minioEndpoint = process.env.MINIO_ENDPOINT?.trim(); // e.g., http://localhost:9000
+const minioAccessKey = process.env.MINIO_ACCESS_KEY?.trim();
+const minioSecretKey = process.env.MINIO_SECRET_KEY?.trim();
+const minioBucket = process.env.MINIO_BUCKET?.trim() || 'ton-colours';
+const minioRegion = process.env.MINIO_REGION?.trim() || 'us-east-1';
+const minioPublicUrl = process.env.MINIO_PUBLIC_URL?.trim(); // Optional: public URL (CDN, ngrok, etc.)
+
 export const config = {
   port,
   tonEndpoint,
@@ -131,6 +139,13 @@ export const config = {
   backendBaseUrl,
   telegram,
   walletVersion,
+  // MinIO
+  minioEndpoint,
+  minioAccessKey,
+  minioSecretKey,
+  minioBucket,
+  minioRegion,
+  minioPublicUrl,
 };
 
 export default config;

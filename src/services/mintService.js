@@ -4,6 +4,7 @@ import config from '../config/env.js';
 import { buildMetadataUri } from './metadataService.js';
 import { normalizeHexColor } from '../utils/color.js';
 import { getMinterWallet, getTonWeb } from './tonClient.js';
+import { uploadColorSvgToMinio, isMinioConfigured } from './minioStorage.js';
 
 const RESULT_PREFIX = 'MINT_RESULT=';
 const SCRIPT_CWD = path.resolve(process.cwd(), 'the-path-season-1-nft');
@@ -258,6 +259,19 @@ export async function mintColorNft({ walletAddress, telegramUserId, color }) {
     const normalizedColor = normalizeHexColor(color);
     const normalizedWallet = walletAddress;
 
+    // Upload SVG to MinIO before minting (if configured)
+    let minioUrl = null;
+    if (isMinioConfigured()) {
+      try {
+        console.log(`[mintService] Uploading SVG to MinIO for color ${normalizedColor}`);
+        minioUrl = await uploadColorSvgToMinio(normalizedColor);
+        console.log(`[mintService] SVG uploaded to MinIO: ${minioUrl}`);
+      } catch (error) {
+        console.error('[mintService] MinIO upload failed, continuing with backend URL:', error);
+        // Continue minting even if MinIO fails (fallback to backend URL)
+      }
+    }
+
     const { result, stdout, stderr } = await runDeployScript({
       walletAddress: normalizedWallet,
       color: normalizedColor,
@@ -293,6 +307,7 @@ export async function mintColorNft({ walletAddress, telegramUserId, color }) {
       mintedAt,
       scriptMetadataUri: result.metadataUri ?? null,
       itemContent: result.itemContent ?? null,
+      minioUrl: minioUrl ?? null, // Include MinIO URL in response
     };
   });
 }

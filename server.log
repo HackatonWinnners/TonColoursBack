@@ -5,3 +5,4 @@
 TON Colours backend listening on port 3000
 [telegram] Webhook registered at https://selina-nontextual-prepositionally.ngrok-free.dev/telegram/webhook
 GET /metadata/0?color=FF0000&tg=123 200 767 - 2.569 ms
+GET /metadata/0?color=00FF00&tg=456 200 767 - 0.393 ms

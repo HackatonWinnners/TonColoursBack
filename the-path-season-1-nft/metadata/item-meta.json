@@ -20,14 +20,14 @@
         },
         {
             "trait_type": "Minted At",
-            "value": "2025-11-06T18:00:10.194Z"
+            "value": "2025-11-06T18:06:51.046Z"
         }
     ],
     "properties": {
         "color": "#AAAAEE",
         "telegramUserId": 7366439433,
         "ownerAddress": "EQBvIvQE1s12fgizz60cg_PkVQ3Y4Yv6ghdCx4DboIu9ukBt",
-        "mintedAt": "2025-11-06T18:00:10.194Z",
+        "mintedAt": "2025-11-06T18:06:51.046Z",
         "imageSource": "inline-svg"
     }
 }
