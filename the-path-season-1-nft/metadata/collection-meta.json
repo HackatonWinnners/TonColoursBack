@@ -1,0 +1,11 @@
+{
+  "name": "TON Colours",
+  "description": "",
+  "image": "https://s3.pathgame.app/public/colours/ton_colours.webp",
+  "cover_image": "https://s3.pathgame.app/public/colours/ton_colours_background.webp",
+  "external_link": "https://t.me/TonColoursBot",
+  "social_links": [
+    "https://t.me/TonColoursChannel"
+  ],
+  "marketplace": "getgems.io"
+}
