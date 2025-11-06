@@ -7,6 +7,7 @@ A minimal Express-based backend that mints colour NFTs on TON for a Telegram Min
 - ✅ Simple REST API (`POST /mint`) for colour NFT minting
 - ✅ Generates deterministic SVG artwork for each colour
 - ✅ Serves NFT metadata via `GET /metadata/:itemIndex`
+- ✅ **MinIO-based permanent storage** for SVG images (GetGems compatible)
 - ✅ Queue-serialised minting to avoid race conditions on collection index
 - ✅ Optional Telegram bot webhook that captures user IDs and triggers mints directly from chat or the mini app
 - ✅ Written in modern ES modules with lightweight dependencies
@@ -21,19 +22,38 @@ A minimal Express-based backend that mints colour NFTs on TON for a Telegram Min
 
 ## Quick Start
 
-1. **Install dependencies**
+### 1. Install dependencies
 
-   ```bash
-   npm install
-   ```
+```bash
+npm install
+```
 
-2. **Copy environment template**
+### 2. Setup MinIO (Optional but Recommended)
 
-   ```bash
-   cp .env.example .env
-   ```
+MinIO provides permanent, CDN-ready storage for SVG images:
 
-3. **Populate `.env`**
+```bash
+# Start MinIO with Docker
+docker-compose up -d
+
+# Test MinIO integration
+npm run test:minio
+```
+
+**See [MinIO Setup Guide](docs/MINIO_SETUP.md) for detailed configuration.**
+
+MinIO environment variables (add to `.env`):
+```env
+MINIO_ENDPOINT=http://localhost:9000
+MINIO_ACCESS_KEY=minioadmin
+MINIO_SECRET_KEY=minioadmin123
+MINIO_BUCKET=ton-colours
+MINIO_PUBLIC_URL=https://your-minio-url.com  # For production
+```
+
+### 3. Configure Environment
+
+Copy and populate `.env`:
 
    | Variable | Description |
    | --- | --- |
