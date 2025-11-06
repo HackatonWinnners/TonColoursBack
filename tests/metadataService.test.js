@@ -12,7 +12,9 @@ describe('buildMetadata', () => {
     });
 
     expect(metadata.name).toContain('#ABCDEF');
-    expect(metadata.image).toMatch(/^data:image\/svg\+xml;base64,/);
+    expect(metadata.image).toContain('/image/1?color=ABCDEF');
+    expect(metadata.image_data).toBeTruthy();
+    expect(metadata.image_data).toMatch(/^[A-Za-z0-9+/=]+$/); // Base64 pattern
     expect(metadata.attributes).toHaveLength(4);
   });
 });
