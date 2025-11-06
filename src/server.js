@@ -3,6 +3,7 @@ import morgan from 'morgan';
 import config from './config/env.js';
 import { mintColorNft } from './services/mintService.js';
 import { buildMetadata } from './services/metadataService.js';
+import { buildColorSvg } from './services/svgGenerator.js';
 import { assertHexColor, assertTelegramUserId, assertTonAddress } from './utils/validation.js';
 import { registerTelegramBot } from './services/telegramBotService.js';
 
@@ -13,6 +14,46 @@ app.use(morgan('tiny'));
 
 app.get('/health', (_req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
+});
+
+// Handle /image{itemIndex} (no slash) - redirect to proper format
+app.get(/^\/image(\d+)/, (req, res) => {
+  const match = req.url.match(/^\/image(\d+)/);
+  const itemIndex = match[1];
+  const queryString = req.url.includes('?') ? req.url.substring(req.url.indexOf('?')) : '';
+  res.redirect(301, `/image/${itemIndex}${queryString}`);
+});
+
+app.get('/image/:itemIndex', (req, res) => {
+  const { color } = req.query;
+
+  if (!color) {
+    return res.status(400).json({ error: 'color query parameter is required' });
+  }
+
+  let colorHex;
+  try {
+    colorHex = assertHexColor(`#${String(color).replace(/^#/, '')}`);
+  } catch (error) {
+    return res.status(400).json({ error: error.message });
+  }
+
+  const svg = buildColorSvg(colorHex);
+  
+  res.setHeader('Content-Type', 'image/svg+xml');
+  res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+  res.send(svg);
+});
+
+// Handle both /metadata/:itemIndex and /metadata{itemIndex} (no slash - for collection base URL without trailing slash)
+app.get(/^\/metadata(\d+)/, (req, res) => {
+  // Extract item index from URL
+  const match = req.url.match(/^\/metadata(\d+)/);
+  const itemIndex = match[1];
+  const queryString = req.url.includes('?') ? req.url.substring(req.url.indexOf('?')) : '';
+  
+  // Redirect to the proper format with slash
+  res.redirect(301, `/metadata/${itemIndex}${queryString}`);
 });
 
 app.get('/metadata/:itemIndex', (req, res) => {

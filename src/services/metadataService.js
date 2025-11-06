@@ -1,5 +1,6 @@
 import { buildColorSvg } from './svgGenerator.js';
 import { normalizeHexColor } from '../utils/color.js';
+import config from '../config/env.js';
 
 function toBase64(input) {
   return Buffer.from(input, 'utf8').toString('base64');
@@ -13,8 +14,11 @@ export function buildMetadata({
   mintedAt,
 }) {
   const normalizedColor = normalizeHexColor(color);
-  const svg = buildColorSvg(normalizedColor);
-  const svgBase64 = toBase64(svg);
+  
+  // Build external image URL instead of data URI for GetGems compatibility
+  const imageUrl = new URL(`${config.backendBaseUrl}/image/${itemIndex}`);
+  imageUrl.searchParams.set('color', normalizedColor.replace('#', ''));
+  
   const attributes = [
     { trait_type: 'Color', value: normalizedColor },
   ];
@@ -34,8 +38,7 @@ export function buildMetadata({
   return {
     name: `TON Colour ${normalizedColor}`,
     description: 'A unique on-chain colour minted on The Open Network for Telegram mini app users.',
-    image: `data:image/svg+xml;base64,${svgBase64}`,
-    image_data: svg,
+    image: imageUrl.toString(),
     attributes,
     background_color: normalizedColor.replace('#', ''),
     external_url: 'https://ton.org/',
