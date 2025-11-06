@@ -13,8 +13,15 @@ import {
 } from '@ton/ton';
 import config from '../config/env.js';
 
-const providerOptions = config.tonApiKey ? { apiKey: config.tonApiKey } : undefined;
-const provider = new TonWeb.HttpProvider(config.tonEndpoint, providerOptions);
+// Build endpoint URL with API key as query parameter for TonCenter
+let endpointUrl = config.tonEndpoint;
+if (config.tonApiKey && endpointUrl.includes('toncenter.com')) {
+  const url = new URL(endpointUrl);
+  url.searchParams.set('api_key', config.tonApiKey);
+  endpointUrl = url.toString();
+}
+
+const provider = new TonWeb.HttpProvider(endpointUrl);
 const tonweb = new TonWeb(provider);
 
 const walletFactories = new Map([

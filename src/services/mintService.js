@@ -216,6 +216,7 @@ async function runDeployScript({ walletAddress, color, telegramUserId }) {
     TON_WALLET_VERSION: config.walletVersion,
     TON_NETWORK: config.tonNetwork,
     TON_ENDPOINT: config.tonEndpoint,
+    TON_API_KEY: config.tonApiKey || '',
   };
 
   const child = spawn(SCRIPT_COMMAND, [...buildScriptArgs(), config.collectionAddress], {

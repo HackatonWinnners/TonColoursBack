@@ -131,9 +131,18 @@ async function runAutomated(ui: any, args: string[]) {
     const mnemonicString = process.env.TON_WALLET_MNEMONIC;
     const network = process.env.TON_NETWORK || 'testnet';
     const endpoint = process.env.TON_ENDPOINT || 'https://testnet.toncenter.com/api/v2/jsonRPC';
+    const apiKey = process.env.TON_API_KEY;
     
     if (!mnemonicString) {
         throw new Error('TON_WALLET_MNEMONIC environment variable is required');
+    }
+    
+    // Build endpoint URL with API key as query parameter for TonCenter
+    let endpointUrl = endpoint;
+    if (apiKey && endpointUrl.includes('toncenter.com')) {
+        const url = new URL(endpointUrl);
+        url.searchParams.set('api_key', apiKey);
+        endpointUrl = url.toString();
     }
     
     // Create wallet with proper walletId for v5r1
@@ -152,8 +161,8 @@ async function runAutomated(ui: any, args: string[]) {
         }
     });
     
-    // Create TonClient and open wallet contract
-    const tonClient = new TonClient({ endpoint });
+    // Create TonClient with API key
+    const tonClient = new TonClient({ endpoint: endpointUrl });
     const walletContract = tonClient.open(wallet);
     const walletAddress = wallet.address;
     
